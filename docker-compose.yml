@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  keeper:
+    build:
+      context: .
+      args:
+        - GOPROXY=${GOPROXY:-}
+    image: ${IMAGE:-starbase-liquidity}
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml
+    entrypoint: /app/keeperd
+    command:
+      - start
+
+  order:
+    build:
+      context: .
+      args:
+        - GOPROXY=${GOPROXY:-}
+    image: ${IMAGE:-starbase-liquidity}
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml
+    entrypoint: /app/orderd
+    command:
+      - api
+
+  watcher:
+    build:
+      context: .
+      args:
+        - GOPROXY=${GOPROXY:-}
+    image: ${IMAGE:-starbase-liquidity}
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml
+    entrypoint: /app/watcherd
+    command:
+      - start

@@ -1,0 +1,89 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "poolAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "words",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAllTicksInWord",
+    "outputs": [
+      {
+        "internalType": "uint160",
+        "name": "sqrtPriceX96",
+        "type": "uint160"
+      },
+      {
+        "internalType": "uint128",
+        "name": "liquidity",
+        "type": "uint128"
+      },
+      {
+        "internalType": "int24",
+        "name": "tickCur",
+        "type": "int24"
+      },
+      {
+        "internalType": "int24[]",
+        "name": "ticks",
+        "type": "int24[]"
+      },
+      {
+        "internalType": "int128[]",
+        "name": "liquidityNets",
+        "type": "int128[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "sdatas",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "getPopulatedTicksInWords",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "datas",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "poolAddrs",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "tickDatas",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "getTickLiqs",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "datas",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

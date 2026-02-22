@@ -1,0 +1,19 @@
+# ECS CI
+
+.deploy-ecs:
+  image: alpine:latest
+  environment:
+    name: $ENV_NAME
+  before_script:
+    - apk add bash aws-cli jq --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+    - chmod +x ./deploy/deploy-ecs.sh
+
+ecs-lpservice:
+  extends: .deploy-ecs
+  stage: deploy
+  rules:
+    - !reference [.rules-dev, rules]
+    - !reference [.rules-staging, rules]
+    - !reference [.rules-prod, rules]
+  script:
+    - ./deploy/deploy-ecs.sh lpservice ${ECS_SERVICE_LPSERVICE_NAME} ${ECS_TASK_DEFINITION_LPSERVICE_NAME}

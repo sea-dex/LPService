@@ -1,0 +1,53 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+  - whitespace
+  - gosec
+  - misspell
+#  - gomnd
+#  - revive
+  - gofmt
+#  - gofumpt
+  - goimports
+  - gci
+  - unconvert
+  - gosimple
+  - ineffassign
+  - asciicheck
+  - bodyclose
+  - bidichk
+  - prealloc
+  - predeclared
+  - unconvert
+
+linters-settings:
+  revive:
+    rules:
+    - name: exported
+      arguments:
+      - disableStutteringCheck
+  gci:
+    # Section configuration to compare against.
+    # Section names are case-insensitive and may contain parameters in ().
+    # Default: ["standard", "default"]
+    sections:
+      - standard                       # Captures all standard packages if they do not match another section.
+      - default                        # Contains all imports that could not be matched to another section type.
+      - prefix(periphery)              # Groups all imports with the specified Prefix.
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+  goimports:
+    # put imports beginning with prefix after 3rd-party packages;
+    # it's a comma-separated list of prefixes
+    local-prefixes: periphery
+
+issues:
+  include:
+  - EXC0012  # EXC0012 revive: Annoying issue about not having a comment. The rare codebase has such comments
+  - EXC0014  # EXC0014 revive: Annoying issue about not having a comment. The rare codebase has such comments
+  exclude-dirs:
+    - test
+    - ci

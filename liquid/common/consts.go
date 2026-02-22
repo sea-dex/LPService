@@ -1,0 +1,3 @@
+package common
+
+const UniswapV3FactoryAddress = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"

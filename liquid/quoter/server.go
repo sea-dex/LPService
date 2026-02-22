@@ -1,0 +1,3 @@
+package quoter
+
+// gin service

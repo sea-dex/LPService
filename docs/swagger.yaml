@@ -1,0 +1,689 @@
+basePath: /api/v0
+definitions:
+  common.JSONResult:
+    properties:
+      code:
+        example: 200
+        type: integer
+      msg:
+        example: success
+        type: string
+    type: object
+  model.DCAOrder:
+    properties:
+      createdAt:
+        type: string
+      cycleSecondsApart:
+        type: integer
+      deletedAt:
+        type: string
+      executedCount:
+        type: integer
+      executedInAmount:
+        type: number
+      expiration:
+        description: timestamp at which a spender's token allowances become invalid
+        type: integer
+      id:
+        type: integer
+      inAmount:
+        description: per time input token amount
+        type: number
+      inputToken:
+        type: string
+      maker:
+        type: string
+      maxOutAmountPerCycle:
+        type: number
+      minOutAmountPerCycle:
+        type: number
+      numberOfTrade:
+        type: integer
+      orderHash:
+        type: string
+      outputToken:
+        type: string
+      salt:
+        type: integer
+      signature:
+        type: string
+      status:
+        description: '0: new，1:booked，2:partial、3:cancelled'
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  model.Permit:
+    properties:
+      amount:
+        description: the maximum amount allowed to spend
+        type: number
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      expiration:
+        description: timestamp at which a spender's token allowances become invalid
+        type: integer
+      id:
+        type: integer
+      nonce:
+        description: an incrementing value indexed per owner,token,and spender for
+          each signature
+        type: integer
+      owner:
+        description: Owner address
+        type: string
+      permitHash:
+        type: string
+      sigDeadline:
+        description: deadline on the permit signature
+        type: number
+      signature:
+        type: string
+      spender:
+        description: address permissioned on the allowed tokens
+        type: string
+      token:
+        description: ERC20 token address
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  param.CancelDCAOrderReq:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  param.CancelLimitOrderReq:
+    properties:
+      orderHash:
+        type: string
+    required:
+    - orderHash
+    type: object
+  param.CancelPermitParam:
+    properties:
+      owner:
+        type: string
+      token:
+        type: string
+    required:
+    - owner
+    - token
+    type: object
+  param.CreateDCAOrderReq:
+    properties:
+      cycleSecondsApart:
+        type: integer
+      expiration:
+        description: timestamp at which a spender's token allowances become invalid
+        type: integer
+      inAmount:
+        description: per time input token amount
+        type: number
+      inputToken:
+        type: string
+      maker:
+        type: string
+      maxOutAmountPerCycle:
+        type: number
+      minOutAmountPerCycle:
+        type: number
+      numberOfTrade:
+        type: integer
+      orderHash:
+        type: string
+      outputToken:
+        type: string
+      salt:
+        type: integer
+      signature:
+        type: string
+    required:
+    - cycleSecondsApart
+    - expiration
+    - inAmount
+    - inputToken
+    - maker
+    - maxOutAmountPerCycle
+    - minOutAmountPerCycle
+    - numberOfTrade
+    - orderHash
+    - outputToken
+    - salt
+    - signature
+    type: object
+  param.LimitOrder:
+    properties:
+      expiration:
+        description: order expiration time
+        type: integer
+      maker:
+        description: maker address
+        type: string
+      makerAmount:
+        description: maker amount
+        type: integer
+      makerToken:
+        description: maker token address
+        type: string
+      salt:
+        description: random value
+        type: integer
+      takerAmount:
+        description: taker amount
+        type: integer
+      takerToken:
+        description: taker token address
+        type: string
+    required:
+    - expiration
+    - maker
+    - makerAmount
+    - makerToken
+    - salt
+    - takerAmount
+    - takerToken
+    type: object
+  param.LimitOrderDetail:
+    properties:
+      createDateTime:
+        description: The date and time of order creation
+        type: string
+      data:
+        $ref: '#/definitions/param.LimitOrder'
+      isMakerContract:
+        description: Indicates if it is a maker contract
+        type: boolean
+      makerAllowance:
+        description: The allowance granted to the maker
+        type: integer
+      makerBalance:
+        description: The balance of the maker
+        type: integer
+      makerRate:
+        description: maker rate
+        type: integer
+      orderHash:
+        type: string
+      orderInvalidReason:
+        description: Reason for order invalidity (null or string)
+        type: string
+      remainingMakerAmount:
+        description: The remaining amount for the maker
+        type: integer
+      remainingTakerAmount:
+        description: The remaining amount for the maker
+        type: integer
+      signature:
+        type: string
+      takerRate:
+        description: taker rate
+        type: integer
+    type: object
+  param.PermitDetails:
+    properties:
+      amount:
+        description: the maximum amount allowed to spend
+        type: number
+      expiration:
+        description: timestamp at which a spender's token allowances become invalid
+        type: integer
+      nonce:
+        description: an incrementing value indexed per owner,token,and spender for
+          each signature
+        type: integer
+      token:
+        description: ERC20 token address
+        type: string
+    required:
+    - amount
+    - expiration
+    - nonce
+    - token
+    type: object
+  param.PermitSingle:
+    properties:
+      details:
+        allOf:
+        - $ref: '#/definitions/param.PermitDetails'
+        description: the permit data for a single token allowance
+      owner:
+        description: Owner address
+        type: string
+      sigDeadline:
+        description: deadline on the permit signature
+        type: number
+      spender:
+        description: address permissioned on the allowed tokens
+        type: string
+    type: object
+  param.PermitSingleParam:
+    properties:
+      permitHash:
+        items:
+          type: integer
+        type: array
+      permitSingle:
+        $ref: '#/definitions/param.PermitSingle'
+      signature:
+        type: string
+    required:
+    - permitHash
+    - permitSingle
+    - signature
+    type: object
+  param.QueryDCAOrderDetailResp:
+    properties:
+      amount:
+        type: integer
+      limit:
+        description: 'Number of limit orders to receive (default: 1, max: 200)'
+        type: integer
+      orders:
+        items:
+          $ref: '#/definitions/model.DCAOrder'
+        type: array
+      page:
+        description: 'Pagination step, default: 1 (page = offset / limit)'
+        type: integer
+    type: object
+  param.QueryLimitOrderDetailResp:
+    properties:
+      amount:
+        type: integer
+      limit:
+        description: 'Number of limit orders to receive (default: 1, max: 200)'
+        type: integer
+      orders:
+        items:
+          $ref: '#/definitions/param.LimitOrderDetail'
+        type: array
+      page:
+        description: 'Pagination step, default: 1 (page = offset / limit)'
+        type: integer
+    type: object
+  param.QueryPermitDetailResp:
+    properties:
+      amount:
+        type: integer
+      limit:
+        description: 'Number of limit orders to receive (default: 1, max: 200)'
+        type: integer
+      page:
+        description: 'Pagination step, default: 1 (page = offset / limit)'
+        type: integer
+      permits:
+        items:
+          $ref: '#/definitions/model.Permit'
+        type: array
+    type: object
+  param.SignedLimitOrderReq:
+    properties:
+      data:
+        allOf:
+        - $ref: '#/definitions/param.LimitOrder'
+        description: order data
+      orderHash:
+        description: order hash
+        type: string
+      signature:
+        description: order signature
+        type: string
+    required:
+    - data
+    - orderHash
+    - signature
+    type: object
+host: localhost:6890
+info:
+  contact:
+    email: support@swagger.io
+    name: Order API Support
+    url: http://www.swagger.io/support
+  description: Order Server API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Order Server API
+  version: "1.0"
+paths:
+  /dca/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel dca order
+      parameters:
+      - description: dca order data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.CancelDCAOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Cancel dca order
+      tags:
+      - DCA
+  /dca/create:
+    post:
+      consumes:
+      - application/json
+      description: Create dca order
+      parameters:
+      - description: dca order data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.CreateDCAOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create dca order
+      tags:
+      - DCA
+  /dca/query:
+    get:
+      consumes:
+      - application/json
+      description: Query dca order list
+      parameters:
+      - in: query
+        name: id
+        type: integer
+      - in: query
+        name: inputToken
+        type: string
+      - in: query
+        maximum: 200
+        name: limit
+        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: maker
+        type: array
+      - in: query
+        name: outputToken
+        type: string
+      - in: query
+        maximum: 1000
+        name: page
+        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: status
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/param.QueryDCAOrderDetailResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Query dca order list
+      tags:
+      - DCA
+  /limit_order/cancel_order:
+    post:
+      consumes:
+      - application/json
+      description: Cancel limit order
+      parameters:
+      - description: cancel order param data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.CancelLimitOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Cancel limit order
+      tags:
+      - LimitOrder
+  /limit_order/order_list:
+    get:
+      consumes:
+      - application/json
+      description: Query limit order
+      parameters:
+      - in: query
+        name: address
+        type: string
+      - in: query
+        maximum: 200
+        name: limit
+        type: integer
+      - in: query
+        name: makerToken
+        type: string
+      - in: query
+        maximum: 1000
+        name: page
+        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: status
+        type: array
+      - in: query
+        name: takerToken
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/param.QueryLimitOrderDetailResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Query limit order
+      tags:
+      - LimitOrder
+  /limit_order/signed_order:
+    post:
+      consumes:
+      - application/json
+      description: Create limit order
+      parameters:
+      - description: User order data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.SignedLimitOrderReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create limit order
+      tags:
+      - LimitOrder
+  /permit/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel permit signature
+      parameters:
+      - description: cancel permit signature param data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.CancelPermitParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Cancel permit signature
+      tags:
+      - Permit signature
+  /permit/create:
+    post:
+      consumes:
+      - application/json
+      description: Create permit signature
+      parameters:
+      - description: create permit signature param data
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/param.PermitSingleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create permit signature
+      tags:
+      - Permit signature
+  /permit/query:
+    get:
+      consumes:
+      - application/json
+      description: Query permit signature list
+      parameters:
+      - in: query
+        maximum: 200
+        name: limit
+        type: integer
+      - description: Owner address
+        in: query
+        name: owner
+        type: string
+      - in: query
+        maximum: 1000
+        name: page
+        type: integer
+      - in: query
+        name: token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/param.QueryPermitDetailResp'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Query permit signature list
+      tags:
+      - Permit signature
+swagger: "2.0"

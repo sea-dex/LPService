@@ -1,0 +1,28 @@
+# docker CI
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+docker:
+  image: docker:stable
+  stage: build
+  services:
+    - docker:dind
+  rules:
+    - !reference [.rules-dev, rules]
+    - !reference [.rules-staging, rules]
+    - !reference [.rules-prod-manual, rules]
+  environment:
+    name: $ENV_NAME
+  before_script:
+    - apk add aws-cli --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+  script:
+    - >-
+      aws ecr get-login-password --region $AWS_REGION |
+      docker login -u AWS --password-stdin $DOCKER_REGISTRY
+    - >-
+      docker build -t $DOCKER_REGISTRY/$APP_FULL_NAME:$DOCKER_TAG_LATEST
+      -t $DOCKER_REGISTRY/$APP_FULL_NAME:$DOCKER_TAG_COMMIT .
+    - docker push $DOCKER_REGISTRY/$APP_FULL_NAME:$DOCKER_TAG_LATEST
+    - docker push $DOCKER_REGISTRY/$APP_FULL_NAME:$DOCKER_TAG_COMMIT

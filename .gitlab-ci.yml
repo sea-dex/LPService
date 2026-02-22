@@ -1,0 +1,65 @@
+image: golang:1.23
+
+variables:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_REGION: $AWS_DEFAULT_REGION
+  DOCKER_REGISTRY: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+  APP_NAME: starbase
+  SRV_NAME: liquidity
+  APP_FULL_NAME: $APP_NAME-$SRV_NAME-$ENV_NAME
+  DOCKER_TAG_LATEST: latest
+  DOCKER_TAG_COMMIT: git-$CI_COMMIT_SHORT_SHA
+  ECS_CLUSTER_NAME: $APP_NAME-$ENV_NAME-cluster
+  # liquidity
+  ECS_SERVICE_LIQUIDITY_NAME: $APP_NAME-liquidity-$ENV_NAME-service
+  ECS_TASK_DEFINITION_LIQUIDITY_NAME: $APP_NAME-liquidity-$ENV_NAME-task
+  # eventfeed
+  ECS_SERVICE_EVENTFEED_NAME: $APP_NAME-eventfeed-$ENV_NAME-service
+  ECS_TASK_DEFINITION_EVENTFEED_NAME: $APP_NAME-eventfeed-$ENV_NAME-task
+  # lpservice
+  ECS_SERVICE_LPSERVICE_NAME: $APP_NAME-lpservice-$ENV_NAME-service
+  ECS_TASK_DEFINITION_LPSERVICE_NAME: $APP_NAME-lpservice-$ENV_NAME-task
+
+.rules-dev:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev" && $CI_PIPELINE_SOURCE =~ "/push|web/"
+      variables:
+        ENV_NAME: dev
+.rules-staging:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging" && $CI_PIPELINE_SOURCE =~ "/push|web/"
+      variables:
+        ENV_NAME: staging
+.rules-prod:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE =~ "/push|web/"
+      variables:
+        ENV_NAME: prod
+.rules-prod-manual:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE =~ "/push|web/"
+      variables:
+        ENV_NAME: prod
+      when: manual
+.rules-merge:
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ "/dev|staging|main/" && $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        ENV_NAME: dev
+
+include:
+  - local: "/deploy/golang.yml"
+  - local: "/deploy/docker.yml"
+  - local: "/deploy/ecs.yml"
+
+stages:
+  - test
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - !reference [.rules-dev, rules]
+    - !reference [.rules-staging, rules]
+    - !reference [.rules-prod, rules]
+    - !reference [.rules-merge, rules]

@@ -1,0 +1,42 @@
+# golang CI
+
+variables:
+  GO_VERSION: "1.23"
+  GOPATH: $CI_PROJECT_DIR/.GOPATH
+  GOLANGCI_LINT_VERSION: "1.61"
+
+.cached-go:
+  environment:
+    name: $ENV_NAME
+  only:
+    - merge_requests
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go/path
+    GOCACHE: $CI_PROJECT_DIR/.go/cache
+  cache:
+    paths:
+      - .go/path/pkg/mod/
+      - .go/cache/
+
+lint:
+  stage: test
+  image: golangci/golangci-lint:v$GOLANGCI_LINT_VERSION-alpine
+  extends: .cached-go
+  script:
+    - apk add git make pkgconf musl-dev gcc librdkafka-dev
+    - golangci-lint run ./...
+
+test:
+  stage: test
+  image: golang:$GO_VERSION
+  extends: .cached-go
+  script:
+    - go test -short -v -race ./...
+
+build-test:
+  stage: test
+  image: golang:$GO_VERSION-alpine
+  extends: .cached-go
+  script:
+    - apk add git make pkgconf musl-dev gcc librdkafka-dev
+    - make build

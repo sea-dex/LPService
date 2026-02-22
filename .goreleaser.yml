@@ -1,0 +1,22 @@
+# .goreleaser.yaml
+builds:
+- main: ./cmd/order
+  goos:
+    - linux
+    - darwin
+  goarch:
+    - amd64
+    - arm64
+  env:
+    - CGO_ENABLED=0
+  ldflags:
+    - -X periphery/version.Version={{.Version}}
+    - -X periphery/version.GitRev={{.Commit}} 
+    - -X periphery/version.BuildDate={{.Date}}
+    - -X periphery/version.GitBranch={{.Branch}}
+release:
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  # If set to true, will mark the release as not ready for production.
+  # Default is false.
+  prerelease: true
