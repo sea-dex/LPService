@@ -106,12 +106,3 @@ func run(ctx *cli.Context) error {
 
 	return nil
 }
-
-// func buildParser() *handlers.Parser {
-// 	handlers.InitABIs()
-// 	parser := handlers.NewParser()
-// 	uniswapv3 := handlers.CreateCAMMHandler("UniswapV3", common.UniswapV3FactoryAddress)
-// 	parser.AddLiquidor(uniswapv3)
-//
-// 	return parser
-// }

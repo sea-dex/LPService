@@ -47,8 +47,8 @@ func NewEventSubscirber(rpcs, wss string,
 		clients   = []*ethclient.Client{}
 	)
 
-	rpcList := strings.Split(rpcs, ",")
-	for _, rpc := range rpcList {
+	rpcList := strings.SplitSeq(rpcs, ",")
+	for rpc := range rpcList {
 		client, err := ethclient.Dial(strings.TrimSpace(rpc))
 		if err != nil {
 			logger.Error().Err(err).Str("rpc", rpc).Msg("create http eth client failed")

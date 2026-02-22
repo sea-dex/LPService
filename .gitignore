@@ -23,6 +23,7 @@ lpservice
 .VSCodeCounter/
 .env
 config.toml
+config.*.toml
 sor/
 log.txt
 lpservice.log

@@ -16,8 +16,8 @@ import (
 // CreateKafkaProducer new kafka producer.
 func CreateKafkaProducer(topic, brokers string) *kafka.Writer {
 	// Producer.RequiredAcks = sarama.WaitForAll
-	addrs := strings.Split(brokers, ",")
-	for _, addr := range addrs {
+	addrs := strings.SplitSeq(brokers, ",")
+	for addr := range addrs {
 		conn, err := kafka.DialLeader(context.Background(), "tcp", addr, topic, 0)
 		if err == nil {
 			// close the connection because we won't be using it
