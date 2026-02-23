@@ -192,7 +192,7 @@ func TestGetLogsFromToParallel(t *testing.T) {
 
 	start := uint64(0)
 	end := uint64(17804820)
-	es := createES("https://red-dawn-daylight.base-mainnet.quiknode.pro/557e5c950e31336ffc89838fd70b0db15e984453", "")
+	es := createES("https://xxx.base-mainnet.quiknode.pro/", "")
 	es.RateInterval = 5
 	step := uint32(5000)
 	addr := []common.Address{
